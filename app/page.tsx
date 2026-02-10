@@ -1,11 +1,11 @@
 'use client'
 
-import { Award, BarChart, Briefcase, Code, Mail, MapPin, Phone, Settings } from 'lucide-react';
+import { Award, BarChart, Briefcase, Code, Mail, MapPin, Phone, Settings, Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import ParticlesComponent from '../components/Particles';
 import { useFormState, useFormStatus } from 'react-dom';
 import { submitMessage } from './actions';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const initialState = {
   message: null,
@@ -29,6 +29,12 @@ function SubmitButton() {
 export default function Home() {
   const [state, formAction] = useFormState(submitMessage, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (state.message) {
@@ -39,9 +45,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-gray-900 text-white">
-      {/* Background Particles */}
+      {/* Background Particles - Client-side only */}
       <div className="fixed inset-0 z-0">
-        <ParticlesComponent id="tsparticles" />
+        {isClient && <ParticlesComponent id="tsparticles" />}
       </div>
 
       {/* Content Wrapper */}
@@ -51,20 +57,22 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20">
               <div className="flex items-center">
-                <a href="#" className="flex items-center space-x-4">
+                <a href="#" className="flex items-center space-x-2 sm:space-x-4">
                   <Image
                     src="/logo-balanca.png"
                     alt="Logo da BalTech"
-                    width={72}
-                    height={72}
+                    width={64}
+                    height={64}
+                    className="w-12 h-12 sm:w-16 sm:h-16"
                   />
                   <div className="flex items-center">
-                    <h1 className="text-2xl font-bold">
+                    <h1 className="text-xl sm:text-2xl font-bold">
                       Bal<span className="text-blue-500">Tech</span>
                     </h1>
                   </div>
                 </a>
               </div>
+              {/* Desktop Nav */}
               <nav className="hidden md:block">
                 <ul className="flex items-center space-x-4">
                   <li><a href="#servicos" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">Serviços</a></li>
@@ -72,8 +80,25 @@ export default function Home() {
                   <li><a href="#contato" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">Contato</a></li>
                 </ul>
               </nav>
+              {/* Mobile Menu Button */}
+              <div className="md:hidden">
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-gray-300 hover:text-white hover:bg-gray-700">
+                  <span className="sr-only">Open menu</span>
+                  {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                </button>
+              </div>
             </div>
           </div>
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden bg-slate-900/80 backdrop-blur-md">
+              <ul className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <li><a href="#servicos" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Serviços</a></li>
+                <li><a href="#sobre" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Sobre Nós</a></li>
+                <li><a href="#contato" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Contato</a></li>
+              </ul>
+            </div>
+          )}
         </header>
 
         <main className="pt-20">
@@ -91,7 +116,7 @@ export default function Home() {
                   <div className="mt-10">
                   <a
                       href="#servicos"
-                      className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+                      className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 text-base md:text-lg"
                   >
                       Conheça Nossas Soluções
                   </a>
@@ -99,9 +124,9 @@ export default function Home() {
               </div>
           </section>
 
-          <div className="space-y-24 container mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="space-y-16 md:space-y-24 container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             {/* Services Section */}
-            <section id="servicos" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-8 md:p-12 border border-slate-800">
+            <section id="servicos" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-12 border border-slate-800">
               <div className="text-center">
                 <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
                   Nossas Soluções
@@ -110,10 +135,10 @@ export default function Home() {
                   Oferecemos uma gama de serviços para impulsionar o seu negócio.
                 </p>
               </div>
-              <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
-                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500 text-white mb-6">
-                    <Code className="h-8 w-8" />
+                  <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
+                    <Code className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
                   <h4 className="text-xl font-bold text-white">Desenvolvimento de Software</h4>
                   <p className="mt-4 text-gray-300">
@@ -121,8 +146,8 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
-                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500 text-white mb-6">
-                    <Briefcase className="h-8 w-8" />
+                  <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
+                    <Briefcase className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
                   <h4 className="text-xl font-bold text-white">Consultoria em TI</h4>
                   <p className="mt-4 text-gray-300">
@@ -130,8 +155,8 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
-                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500 text-white mb-6">
-                    <Settings className="h-8 w-8" />
+                  <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
+                    <Settings className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
                   <h4 className="text-xl font-bold text-white">Integração de Sistemas</h4>
                   <p className="mt-4 text-gray-300">
@@ -142,9 +167,9 @@ export default function Home() {
             </section>
 
             {/* About Us Section */}
-            <section id="sobre" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-8 md:p-12 border border-slate-800">
+            <section id="sobre" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-12 border border-slate-800">
               <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
-                <div>
+                <div className="text-center lg:text-left">
                   <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
                     Sobre a BalTech
                   </h3>
@@ -152,24 +177,24 @@ export default function Home() {
                     Somos uma equipe apaixonada por tecnologia e inovação. Nossa missão é fornecer soluções tecnológicas que se alinhem perfeitamente à operação dos nossos clientes, impulsionando o crescimento e a eficiência.
                   </p>
                   <div className="mt-8 grid grid-cols-2 gap-6">
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center lg:justify-start">
                           <Award className="h-8 w-8 text-blue-500" />
                           <p className="ml-3 text-lg font-medium text-white">Qualidade</p>
                       </div>
-                      <div className="flex items-center">
+                      <div className="flex items-center justify-center lg:justify-start">
                           <BarChart className="h-8 w-8 text-blue-500" />
                           <p className="ml-3 text-lg font-medium text-white">Inovação</p>
                       </div>
                   </div>
                 </div>
                 <div className="mt-12 lg:mt-0">
-                  <img className="rounded-lg shadow-xl" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Nossa equipe" />
+                  <img className="rounded-lg shadow-xl w-full h-auto" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Nossa equipe" />
                 </div>
               </div>
             </section>
 
             {/* Contact Section */}
-            <section id="contato" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-8 md:p-12 border border-slate-800">
+            <section id="contato" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-12 border border-slate-800">
               <div className="text-center">
                 <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
                   Entre em Contato
@@ -178,7 +203,7 @@ export default function Home() {
                   Pronto para transformar sua operação? Fale conosco.
                 </p>
               </div>
-              <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+              <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
                 <form ref={formRef} action={formAction} className="grid grid-cols-1 gap-y-6">
                   <div>
                     <input type="text" name="fullName" placeholder="Nome completo" className="w-full shadow-sm py-3 px-4 rounded-md bg-slate-800/60 border border-slate-700 focus:ring-blue-500 focus:border-blue-500" />
@@ -224,7 +249,7 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-slate-900/70 backdrop-blur-sm mt-24">
+        <footer className="bg-slate-900/70 backdrop-blur-sm mt-16 md:mt-24">
           <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
               <div className="md:flex md:items-center md:justify-between">
                   <div className="flex justify-center space-x-6 md:order-2">
