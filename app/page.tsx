@@ -225,21 +225,22 @@ export default function Home() {
                     <Mail className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
                     <div className="ml-4">
                       <h4 className="text-lg font-medium">Email</h4>
-                      <p className="text-gray-400">contato@baltech.com</p>
+                      <p className="text-gray-400">baltechnology@outlook.com
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <Phone className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
                     <div className="ml-4">
                       <h4 className="text-lg font-medium">Telefone</h4>
-                      <p className="text-gray-400">(11) 99999-9999</p>
+                      <p className="text-gray-400">(13) 997965049 </p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <MapPin className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
                     <div className="ml-4">
-                      <h4 className="text-lg font-medium">Endereço</h4>
-                      <p className="text-gray-400">Av. Principal, 123, São Paulo, SP</p>
+                      <h4 className="text-lg font-medium">Guarujá</h4>
+                      <p className="text-gray-400">Guarujá SP</p>
                     </div>
                   </div>
                 </div>
