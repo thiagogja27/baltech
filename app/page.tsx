@@ -111,7 +111,7 @@ export default function Home() {
                   BalTech Solutions
                   </h2>
                   <p className="mt-4 text-xl sm:text-2xl text-gray-300">
-                  Tecnologia alinhada à sua operação.
+                  Tecnologia alinhada à operação.
                   </p>
                   <div className="mt-10">
                   <a
