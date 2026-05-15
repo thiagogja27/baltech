@@ -67,7 +67,7 @@ export default function Home() {
                   />
                   <div className="flex items-center">
                     <h1 className="text-xl sm:text-2xl font-bold">
-                      Bal<span className="text-cyan-500">Tech</span>
+                      Bal<span className="text-teal-400">Tech</span>
                     </h1>
                   </div>
                 </a>
@@ -233,7 +233,8 @@ export default function Home() {
                     <Phone className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
                     <div className="ml-4">
                       <h4 className="text-lg font-medium">Telefone</h4>
-                      <p className="text-gray-400">(13) 997965049 </p>
+                      <p className="text-gray-400">(13) 99796-5049 </p>
+                      <p className="text-gray-400">(13) 98108-3361 </p>
                     </div>
                   </div>
                   <div className="flex items-start">
