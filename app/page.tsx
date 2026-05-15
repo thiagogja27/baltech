@@ -67,7 +67,7 @@ export default function Home() {
                   />
                   <div className="flex items-center">
                     <h1 className="text-xl sm:text-2xl font-bold">
-                      Bal<span className="text-blue-500">Tech</span>
+                      Bal<span className="text-cyan-500">Tech</span>
                     </h1>
                   </div>
                 </a>
