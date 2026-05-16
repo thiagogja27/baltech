@@ -34,9 +34,11 @@ export default function Home() {
   const [isClient, setIsClient] = useState(false);
   const [introStage, setIntroStage] = useState<'enter' | 'move' | 'fade' | 'hidden'>('enter');
   const [logoTarget, setLogoTarget] = useState({ left: 0, top: 0, width: 96, height: 96 });
+  const [isMobile, setIsMobile] = useState(false);
+
   const particlesMarkup = useMemo(
-    () => (isClient ? <ParticlesComponent id="tsparticles" /> : null),
-    [isClient],
+    () => (isClient && !isMobile ? <ParticlesComponent id="tsparticles" /> : null),
+    [isClient, isMobile],
   );
 
   useEffect(() => {
@@ -49,8 +51,15 @@ export default function Home() {
       }
     };
 
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
     updateTarget();
+    updateIsMobile();
+
     window.addEventListener('resize', updateTarget);
+    window.addEventListener('resize', updateIsMobile);
 
     const moveTimer = window.setTimeout(() => setIntroStage('move'), 1800);
     const fadeTimer = window.setTimeout(() => setIntroStage('fade'), 2600);
@@ -58,6 +67,7 @@ export default function Home() {
 
     return () => {
       window.removeEventListener('resize', updateTarget);
+      window.removeEventListener('resize', updateIsMobile);
       window.clearTimeout(moveTimer);
       window.clearTimeout(fadeTimer);
       window.clearTimeout(hideTimer);
