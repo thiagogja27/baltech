@@ -1,7 +1,7 @@
 "use client";
 
 import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { loadFull } from "tsparticles"; 
 import { type ISourceOptions } from "@tsparticles/engine";
 
@@ -18,6 +18,9 @@ const ParticlesComponent = (props: any) => {
 
   const options: ISourceOptions = useMemo(
     () => ({
+      fullScreen: {
+        enable: false,
+      },
       background: {
         color: {
           value: "#0d1117",
@@ -84,4 +87,4 @@ const ParticlesComponent = (props: any) => {
   return <></>;
 };
 
-export default ParticlesComponent;
+export default memo(ParticlesComponent);

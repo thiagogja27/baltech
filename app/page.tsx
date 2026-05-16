@@ -5,7 +5,7 @@ import Image from 'next/image';
 import ParticlesComponent from '../components/Particles';
 import { useFormState, useFormStatus } from 'react-dom';
 import { submitMessage } from './actions';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const initialState = {
   message: null,
@@ -29,11 +29,39 @@ function SubmitButton() {
 export default function Home() {
   const [state, formAction] = useFormState(submitMessage, initialState);
   const formRef = useRef<HTMLFormElement>(null);
+  const headerLogoRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [introStage, setIntroStage] = useState<'enter' | 'move' | 'fade' | 'hidden'>('enter');
+  const [logoTarget, setLogoTarget] = useState({ left: 0, top: 0, width: 96, height: 96 });
+  const particlesMarkup = useMemo(
+    () => (isClient ? <ParticlesComponent id="tsparticles" /> : null),
+    [isClient],
+  );
 
   useEffect(() => {
     setIsClient(true);
+
+    const updateTarget = () => {
+      const rect = headerLogoRef.current?.getBoundingClientRect();
+      if (rect) {
+        setLogoTarget({ left: rect.left, top: rect.top, width: rect.width, height: rect.height });
+      }
+    };
+
+    updateTarget();
+    window.addEventListener('resize', updateTarget);
+
+    const moveTimer = window.setTimeout(() => setIntroStage('move'), 1800);
+    const fadeTimer = window.setTimeout(() => setIntroStage('fade'), 2600);
+    const hideTimer = window.setTimeout(() => setIntroStage('hidden'), 3200);
+
+    return () => {
+      window.removeEventListener('resize', updateTarget);
+      window.clearTimeout(moveTimer);
+      window.clearTimeout(fadeTimer);
+      window.clearTimeout(hideTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -47,7 +75,7 @@ export default function Home() {
     <div className="relative min-h-screen bg-gray-900 text-white">
       {/* Background Particles - Client-side only */}
       <div className="fixed inset-0 z-0">
-        {isClient && <ParticlesComponent id="tsparticles" />}
+        {particlesMarkup}
       </div>
 
       {/* Content Wrapper */}
@@ -57,14 +85,18 @@ export default function Home() {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-20">
               <div className="flex items-center">
-                <a href="#" className="flex items-center space-x-2 sm:space-x-4">
-                  <Image
-                    src="/logo-balanca.png"
-                    alt="Logo da BalTech"
-                    width={64}
-                    height={64}
-                    className="w-12 h-12 sm:w-16 sm:h-16"
-                  />
+                <a href="#" className="flex items-center space-x-3 sm:space-x-4">
+                  <div ref={headerLogoRef} className="relative flex items-center">
+                    <div className="rounded-lg p-1 bg-slate-800/30 border-2 border-cyan-400/25 flex items-center justify-center">
+                      <Image
+                        src="/logo-balanca.png"
+                        alt="Logo da BalTech"
+                        width={64}
+                        height={64}
+                        className={`w-12 h-12 sm:w-16 sm:h-16 transition-opacity duration-500 ${introStage === 'hidden' ? 'opacity-100' : 'opacity-0'}`}
+                      />
+                    </div>
+                  </div>
                   <div className="flex items-center">
                     <h1 className="text-xl sm:text-2xl font-bold">
                       Bal<span className="text-teal-400">Tech</span>
@@ -101,32 +133,68 @@ export default function Home() {
           )}
         </header>
 
+        {introStage !== 'hidden' && (
+          <div className={`fixed inset-0 z-[60] flex items-center justify-center logo-intro-overlay ${introStage === 'fade' ? 'logo-intro-fade' : ''}`}>
+            <div
+              className={`logo-intro-image relative flex items-center justify-center rounded-3xl border border-teal-400/20 bg-slate-900/80 shadow-[0_24px_80px_rgba(14,165,233,0.18)] ${introStage !== 'enter' ? 'logo-intro-move' : ''}`}
+              style={
+                introStage !== 'enter'
+                  ? {
+                      left: logoTarget.left,
+                      top: logoTarget.top,
+                      width: logoTarget.width,
+                      height: logoTarget.height,
+                      transform: 'translate(0, 0)',
+                    }
+                  : undefined
+              }
+            >
+              <Image
+                src="/logo-balanca.png"
+                alt="Logo da BalTech"
+                width={96}
+                height={96}
+                className="h-24 w-24"
+                priority
+              />
+            </div>
+          </div>
+        )}
+
         <main className="pt-20">
           {/* Hero Section */}
           <section className="relative flex h-[calc(100vh-5rem)] items-center justify-center text-center">
               <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-radial-gradient from-purple-600 to-transparent blur-3xl opacity-30 animate-pulse"></div>
               <div className="absolute bottom-1/4 right-1/4 w-1/2 h-1/2 bg-radial-gradient from-teal-500 to-transparent blur-3xl opacity-30 animate-pulse-delay"></div>
               <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
-                  BalTech Solutions
-                  </h2>
-                  <p className="mt-4 text-xl sm:text-2xl text-gray-300">
-                  Tecnologia alinhada à operação.
-                  </p>
-                  <div className="mt-10">
-                  <a
-                      href="#servicos"
-                      className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 text-base md:text-lg"
-                  >
-                      Conheça Nossas Soluções
-                  </a>
+                <div className="hero-card mx-auto p-8 rounded-2xl bg-gradient-to-br from-slate-900/80 to-slate-800/60 border border-teal-900/10 backdrop-blur-md shadow-[0_30px_80px_rgba(2,6,23,0.55)]">
+                  <div className="flex flex-col items-center lg:flex-row lg:items-center gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="rounded-xl p-3 bg-gradient-to-br from-teal-500/10 to-transparent border border-teal-400/10">
+                        <Image src="/logo-balanca.png" alt="Logo da BalTech" width={96} height={96} className="h-20 w-20" />
+                      </div>
+                    </div>
+                    <div className="text-center lg:text-left">
+                      <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight">
+                        BalTech Solutions
+                      </h2>
+                      <div className="mt-6">
+                        <a
+                          href="#servicos"
+                          className="inline-block bg-teal-400 text-slate-900 font-semibold py-3 px-6 rounded-lg shadow hover:scale-105 transition-transform"
+                        >
+                          Conheça Nossas Soluções
+                        </a>
+                      </div>
+                    </div>
                   </div>
+                </div>
               </div>
           </section>
 
           <div className="space-y-16 md:space-y-24 container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
             {/* Services Section */}
-            <section id="servicos" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-12 border border-slate-800">
+            <section id="servicos" className="bg-gradient-to-br from-slate-900/60 to-slate-800/50 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-12 border border-slate-700/30">
               <div className="text-center">
                 <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
                   Nossas Soluções
@@ -136,7 +204,7 @@ export default function Home() {
                 </p>
               </div>
               <div className="mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
+                <div className="glass-card bg-slate-800/50 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700/20 backdrop-blur-sm">
                   <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
                     <Code className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
@@ -145,7 +213,7 @@ export default function Home() {
                     Criamos soluções de software personalizadas e escaláveis para atender às necessidades específicas do seu negócio.
                   </p>
                 </div>
-                <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
+                <div className="glass-card bg-slate-800/50 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700/20 backdrop-blur-sm">
                   <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
                     <Briefcase className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
@@ -154,7 +222,7 @@ export default function Home() {
                     Nossos especialistas analisam sua infraestrutura de TI para otimizar processos e reduzir custos.
                   </p>
                 </div>
-                <div className="bg-slate-800/60 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700">
+                <div className="glass-card bg-slate-800/50 rounded-lg shadow-lg p-8 transform hover:scale-105 transition-transform duration-300 border border-slate-700/20 backdrop-blur-sm">
                   <div className="flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-500 text-white mb-6">
                     <Settings className="h-6 w-6 sm:h-8 sm:w-8" />
                   </div>
@@ -188,7 +256,13 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="mt-12 lg:mt-0">
-                  <img className="rounded-lg shadow-xl w-full h-auto" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Nossa equipe" />
+                  <Image
+                    className="rounded-lg shadow-xl w-full h-auto"
+                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Nossa equipe"
+                    width={2070}
+                    height={1380}
+                  />
                 </div>
               </div>
             </section>
@@ -197,7 +271,7 @@ export default function Home() {
             <section id="contato" className="bg-slate-900/70 backdrop-blur-sm rounded-xl shadow-2xl p-6 md:p-12 border border-slate-800">
               <div className="text-center">
                 <h3 className="text-3xl font-extrabold text-white sm:text-4xl">
-                  Entre em Contato
+                  Entre em Contato!
                 </h3>
                 <p className="mt-4 text-lg text-gray-400">
                   Pronto para transformar sua operação? Fale conosco.
