@@ -97,15 +97,13 @@ export default function Home() {
               <div className="flex items-center">
                 <a href="#" className="flex items-center space-x-3 sm:space-x-4">
                   <div ref={headerLogoRef} className="relative flex items-center">
-                    <div className="rounded-lg p-1 bg-slate-800/30 border-2 border-cyan-400/25 flex items-center justify-center">
-                      <Image
-                        src="/logo-balanca.png"
-                        alt="Logo da BalTech"
-                        width={64}
-                        height={64}
-                        className={`w-12 h-12 sm:w-16 sm:h-16 transition-opacity duration-500 ${introStage === 'hidden' ? 'opacity-100' : 'opacity-0'}`}
-                      />
-                    </div>
+                    <Image
+                      src="/logo-balanca.png"
+                      alt="Logo da BalTech"
+                      width={64}
+                      height={64}
+                      className={`w-12 h-12 sm:w-16 sm:h-16 transition-opacity duration-500 ${introStage === 'hidden' ? 'opacity-100' : 'opacity-0'}`}
+                    />
                   </div>
                   <div className="flex items-center">
                     <h1 className="text-xl sm:text-2xl font-bold">
@@ -164,7 +162,7 @@ export default function Home() {
                 alt="Logo da BalTech"
                 width={96}
                 height={96}
-                className="h-24 w-24"
+                className="h-full w-full object-contain"
                 priority
               />
             </div>

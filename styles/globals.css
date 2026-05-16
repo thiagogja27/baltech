@@ -67,8 +67,8 @@ html {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 7rem;
-  height: 7rem;
+  width: 6rem;
+  height: 6rem;
   transform: translate(-50%, -50%);
   transition: top 0.9s cubic-bezier(0.22, 1, 0.36, 1), left 0.9s cubic-bezier(0.22, 1, 0.36, 1), width 0.9s cubic-bezier(0.22, 1, 0.36, 1), height 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
