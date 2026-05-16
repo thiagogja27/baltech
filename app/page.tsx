@@ -240,7 +240,7 @@ export default function Home() {
                   <div className="flex items-start">
                     <MapPin className="h-6 w-6 text-blue-500 flex-shrink-0 mt-1" />
                     <div className="ml-4">
-                      <h4 className="text-lg font-medium">Guarujá</h4>
+                      <h4 className="text-lg font-medium">Localidade</h4>
                       <p className="text-gray-400">Guarujá SP</p>
                     </div>
                   </div>
